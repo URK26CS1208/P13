@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>FitSphere - Fitness Task Manager</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #edf2f8;
+    color: #263b32;
+}
+
+/* MAIN LAYOUT */
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 220px;
+    background: #263b32;
+    color: white;
+    padding: 25px 15px;
+    flex-shrink: 0;
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.logo h2 {
+    color: #8ee0a5;
+    font-size: 25px;
+}
+
+.logo p {
+    font-size: 11px;
+    margin-top: 5px;
+    color: #c8e6d0;
+}
+
+.sidebar h3 {
+    font-size: 14px;
+    margin: 15px 5px;
+}
+
+.sidebar a {
+    display: block;
+    padding: 12px;
+    margin: 5px 0;
+    color: #e0e9e2;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background: #3f6b50;
+    color: white;
+}
+
+/* MAIN CONTENT */
+.main {
+    flex: 1;
+    min-width: 0;
+    padding: 25px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.topbar h1 {
+    font-size: 27px;
+    color: #263b32;
+}
+
+.topbar p {
+    color: #777;
+    margin-top: 6px;
+}
+
+/* INPUT SECTION */
+.input-section {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    background: white;
+    padding: 18px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px #00000010;
+}
+
+.input-section input,
+.input-section select {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    min-width: 0;
+}
+
+.input-section input {
+    flex: 1;
+}
+
+button {
+    border: none;
+    padding: 11px 17px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.add-btn {
+    background: #3f6b50;
+    color: white;
+}
+
+.add-btn:hover {
+    background: #263b32;
+}
+
+/* TASK BOARD */
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(220px, 1fr));
+    gap: 15px;
+    align-items: start;
+    overflow-x: auto;
+}
+
+.column {
+    background: #f8fafc;
+    border: 1px solid #dce2e8;
+    border-radius: 9px;
+    padding: 12px;
+    min-height: 390px;
+}
+
+.column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.column-header h3 {
+    font-size: 15px;
+}
+
+.count {
+    background: #e5e9ef;
+    padding: 4px 9px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+/* TASK CARDS */
+.task {
+    padding: 14px;
+    margin-bottom: 12px;
+    border-radius: 7px;
+    border-left: 5px solid;
+    box-shadow: 0 2px 5px #00000010;
+    background: white;
+}
+
+.pending {
+    background: #e8fbdc;
+    border-color: #79bd52;
+}
+
+.progress {
+    background: #ffe2e2;
+    border-color: #e77b7b;
+}
+
+.completed {
+    background: #d9f2fa;
+    border-color: #54b5cf;
+}
+
+.task h4 {
+    font-size: 14px;
+    margin-bottom: 8px;
+    overflow-wrap: anywhere;
+}
+
+.task p {
+    font-size: 12px;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.tag {
+    display: inline-block;
+    background: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    margin-bottom: 10px;
+}
+
+/* TASK ACTIONS */
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 8px;
+}
+
+.actions button {
+    padding: 6px 8px;
+    font-size: 11px;
+}
+
+.edit-btn {
+    background: #f5bd52;
+    color: #263b32;
+}
+
+.delete-btn {
+    background: #e85c5c;
+    color: white;
+}
+
+.status-select {
+    width: 100%;
+    padding: 7px;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    margin-top: 5px;
+    font-size: 11px;
+}
+
+/* SEARCH AND FILTER */
+.tools {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.tools input,
+.tools select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.tools input {
+    flex: 1;
+    min-width: 0;
+}
+
+/* MESSAGE */
+#message {
+    margin-bottom: 15px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #777;
+    font-size: 13px;
+}
+
+/* RESPONSIVE */
+@media(max-width:850px) {
+    .sidebar {
+        width: 170px;
+    }
+
+    .board {
+        grid-template-columns: repeat(3, 230px);
+    }
+
+    .input-section {
+        flex-wrap: wrap;
+    }
+}
+
+@media(max-width:550px) {
+    .layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .sidebar nav {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .sidebar a {
+        padding: 8px;
+    }
+
+    .main {
+        padding: 15px;
+    }
+
+    .topbar h1 {
+        font-size: 22px;
+    }
+
+    .input-section {
+        flex-direction: column;
+    }
+
+    .tools {
+        flex-direction: column;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+    <div class="logo">
+        <h2>FitSphere</h2>
+        <p>FITNESS TASK MANAGER</p>
+    </div>
+
+    <h3>🏋️ TASK MANAGER</h3>
+
+    <nav>
+        <a href="#dashboard" class="active">▣ Dashboard</a>
+        <a href="#board">▦ Task Board</a>
+        <a href="#pending">◷ Pending</a>
+        <a href="#progress">◉ In Progress</a>
+        <a href="#completed">✓ Completed</a>
+    </nav>
+
+</aside>
+
+
+<!-- MAIN CONTENT -->
+<main class="main" id="dashboard">
+
+    <div class="topbar">
+
+        <div>
+            <h1>Fitness Task Manager</h1>
+            <p>Manage your daily fitness activities</p>
+        </div>
+
+        <strong>🏆 Stay Fit!</strong>
+
+    </div>
+
+
+    <!-- INPUT BOX AND ADD BUTTON -->
+    <section class="input-section">
+
+        <input
+            type="text"
+            id="taskInput"
+            placeholder="Enter your fitness task..."
+        >
+
+        <select id="categoryInput">
+            <option value="Workout">Workout</option>
+            <option value="Diet">Diet</option>
+            <option value="Yoga">Yoga</option>
+            <option value="Training">Training</option>
+        </select>
+
+        <button class="add-btn" onclick="addTask()">
+            + Add Task
+        </button>
+
+    </section>
+
+
+    <div id="message"></div>
+
+
+    <!-- SEARCH AND FILTER -->
+    <section class="tools">
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="🔍 Search fitness tasks..."
+            oninput="renderTasks()"
+        >
+
+        <select id="filterInput" onchange="renderTasks()">
+
+            <option value="All">All Tasks</option>
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+
+        </select>
+
+    </section>
+
+
+    <!-- TASK BOARD -->
+    <section class="board" id="board">
+
+        <!-- PENDING -->
+        <div class="column" id="pending">
+
+            <div class="column-header">
+                <h3>Pending</h3>
+                <span class="count" id="pendingCount">0</span>
+            </div>
+
+            <div id="pendingTasks"></div>
+
+        </div>
+
+
+        <!-- IN PROGRESS -->
+        <div class="column" id="progress">
+
+            <div class="column-header">
+                <h3>In Progress</h3>
+                <span class="count" id="progressCount">0</span>
+            </div>
+
+            <div id="progressTasks"></div>
+
+        </div>
+
+
+        <!-- COMPLETED -->
+        <div class="column" id="completed">
+
+            <div class="column-header">
+                <h3>Completed</h3>
+                <span class="count" id="completedCount">0</span>
+            </div>
+
+            <div id="completedTasks"></div>
+
+        </div>
+
+    </section>
+
+    <footer>
+        © 2026 FitSphere | Fitness Task Management System
+    </footer>
+
+</main>
+
+</div>
+
+
+<script>
+
+// 1. ARRAY OF TASKS
+
+let tasks = [
+
+    {
+        id: 1,
+        title: "Morning Running",
+        category: "Workout",
+        status: "Pending"
+    },
+
+    {
+        id: 2,
+        title: "Strength Training",
+        category: "Training",
+        status: "In Progress"
+    },
+
+    {
+        id: 3,
+        title: "Drink 3 Litres of Water",
+        category: "Diet",
+        status: "Completed"
+    },
+
+    {
+        id: 4,
+        title: "Yoga Practice",
+        category: "Yoga",
+        status: "Pending"
+    },
+
+    {
+        id: 5,
+        title: "Evening Cardio",
+        category: "Workout",
+        status: "In Progress"
+    }
+
+];
+
+
+// 2. CREATE - ADD NEW TASK
+
+function addTask() {
+
+    let input = document.getElementById("taskInput");
+
+    let category = document.getElementById("categoryInput").value;
+
+    let title = input.value.trim();
+
+
+    // INPUT VALIDATION
+
+    if (title === "") {
+
+        showMessage("Please enter a fitness task.", "red");
+
+        input.focus();
+
+        return;
+
+    }
+
+
+    // CREATE NEW TASK OBJECT
+
+    let newTask = {
+
+        id: Date.now(),
+
+        title: title,
+
+        category: category,
+
+        status: "Pending"
+
+    };
+
+
+    // ADD TASK TO ARRAY
+
+    tasks.push(newTask);
+
+
+    // CLEAR INPUT BOX
+
+    input.value = "";
+
+
+    // DISPLAY UPDATED TASKS
+
+    renderTasks();
+
+
+    showMessage("Fitness task added successfully!", "green");
+
+}
+
+
+// 3. READ - DISPLAY TASKS
+
+function renderTasks() {
+
+    let pending = document.getElementById("pendingTasks");
+
+    let progress = document.getElementById("progressTasks");
+
+    let completed = document.getElementById("completedTasks");
+
+
+    // CLEAR OLD TASKS
+
+    pending.replaceChildren();
+
+    progress.replaceChildren();
+
+    completed.replaceChildren();
+
+
+    let search = document.getElementById("searchInput")
+        .value.toLowerCase();
+
+    let filter = document.getElementById("filterInput").value;
+
+
+    let counts = {
+
+        Pending: 0,
+
+        "In Progress": 0,
+
+        Completed: 0
+
+    };
+
+
+    // READ ARRAY USING FOR EACH
+
+    tasks.forEach(function(task) {
+
+        counts[task.status]++;
+
+
+        // SEARCH CONDITION
+
+        if (!task.title.toLowerCase().includes(search)) {
+
+            return;
+
+        }
+
+
+        // FILTER CONDITION
+
+        if (filter !== "All" && filter !== task.status) {
+
+            return;
+
+        }
+
+
+        let card = document.createElement("div");
+
+        card.className = "task";
+
+
+        // STATUS COLOUR
+
+        if (task.status === "Pending") {
+
+            card.classList.add("pending");
+
+        }
+
+        else if (task.status === "In Progress") {
+
+            card.classList.add("progress");
+
+        }
+
+        else {
+
+            card.classList.add("completed");
+
+        }
+
+
+        // TASK TITLE
+
+        let heading = document.createElement("h4");
+
+        heading.textContent = task.title;
+
+        card.appendChild(heading);
+
+
+        // CATEGORY
+
+        let category = document.createElement("span");
+
+        category.className = "tag";
+
+        category.textContent = task.category;
+
+        card.appendChild(category);
+
+
+        // STATUS TEXT
+
+        let statusText = document.createElement("p");
+
+        statusText.textContent = "Status: " + task.status;
+
+        card.appendChild(statusText);
+
+
+        // STATUS UPDATE SELECT
+
+        let statusSelect = document.createElement("select");
+
+        statusSelect.className = "status-select";
+
+        ["Pending", "In Progress", "Completed"].forEach(function(status) {
+
+            let option = document.createElement("option");
+
+            option.value = status;
+
+            option.textContent = status;
+
+            if (status === task.status) {
+
+                option.selected = true;
+
+            }
+
+            statusSelect.appendChild(option);
+
+        });
+
+
+        statusSelect.onchange = function() {
+
+            updateTask(task.id, statusSelect.value);
+
+        };
+
+        card.appendChild(statusSelect);
+
+
+        // ACTION BUTTONS
+
+        let actions = document.createElement("div");
+
+        actions.className = "actions";
+
+
+        // UPDATE BUTTON
+
+        let editButton = document.createElement("button");
+
+        editButton.className = "edit-btn";
+
+        editButton.textContent = "Edit";
+
+        editButton.onclick = function() {
+
+            editTask(task.id);
+
+        };
+
+
+        // DELETE BUTTON
+
+        let deleteButton = document.createElement("button");
+
+        deleteButton.className = "delete-btn";
+
+        deleteButton.textContent = "Delete";
+
+        deleteButton.onclick = function() {
+
+            deleteTask(task.id);
+
+        };
+
+
+        actions.appendChild(editButton);
+
+        actions.appendChild(deleteButton);
+
+        card.appendChild(actions);
+
+
+        // DISPLAY IN CORRECT COLUMN
+
+        if (task.status === "Pending") {
+
+            pending.appendChild(card);
+
+        }
+
+        else if (task.status === "In Progress") {
+
+            progress.appendChild(card);
+
+        }
+
+        else {
+
+            completed.appendChild(card);
+
+        }
+
+    });
+
+
+    // UPDATE TASK COUNTS
+
+    document.getElementById("pendingCount").textContent =
+        counts.Pending;
+
+    document.getElementById("progressCount").textContent =
+        counts["In Progress"];
+
+    document.getElementById("completedCount").textContent =
+        counts.Completed;
+
+}
+
+
+// 4. UPDATE - EDIT TASK
+
+function editTask(id) {
+
+    let task = tasks.find(function(item) {
+
+        return item.id === id;
+
+    });
+
+
+    if (task) {
+
+        let newTitle = prompt("Edit your fitness task:", task.title);
+
+
+        if (newTitle === null) {
+
+            return;
+
+        }
+
+
+        if (newTitle.trim() === "") {
+
+            showMessage("Task name cannot be empty.", "red");
+
+            return;
+
+        }
+
+
+        task.title = newTitle.trim();
+
+
+        renderTasks();
+
+        showMessage("Task updated successfully!", "green");
+
+    }
+
+}
+
+
+// 5. UPDATE - CHANGE TASK STATUS
+
+function updateTask(id, newStatus) {
+
+    let task = tasks.find(function(item) {
+
+        return item.id === id;
+
+    });
+
+
+    if (task) {
+
+        task.status = newStatus;
+
+        renderTasks();
+
+        showMessage("Task status updated successfully!", "green");
+
+    }
+
+}
+
+
+// 6. DELETE - REMOVE TASK
+
+function deleteTask(id) {
+
+    let confirmDelete = confirm(
+        "Are you sure you want to delete this task?"
+    );
+
+
+    if (confirmDelete) {
+
+        tasks = tasks.filter(function(task) {
+
+            return task.id !== id;
+
+        });
+
+
+        renderTasks();
+
+        showMessage("Task deleted successfully!", "green");
+
+    }
+
+}
+
+
+// 7. DISPLAY MESSAGES
+
+function showMessage(message, color) {
+
+    let msg = document.getElementById("message");
+
+    msg.textContent = message;
+
+    msg.style.color = color;
+
+}
+
+
+// INITIAL DISPLAY
+
+renderTasks();
+
+console.log("FitSphere Task Manager Loaded Successfully.");
+
+</script>
+
+</body>
+</html>
